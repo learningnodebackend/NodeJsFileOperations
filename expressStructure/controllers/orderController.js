@@ -1,12 +1,12 @@
 // Mock database (in-memory)
-let users = [
+let orders = [
     { orderId: 1, Itam : 'Shirt' , Qty : 3 },
   ];
   
   
   const getAllOrders = (req, res) => {
-    console.log("getAllUsers API Called...")
-    res.json(users);
+    console.log("getAllorders API Called...")
+    res.json(orders);
   };
   
   

@@ -20,6 +20,9 @@ let users = [
   
   const getUserById = (req, res) => {
     console.log("getUserById API Called...")
+    let obj = {name : "dhaval"}
+    let jsonFormatVar = JSON.stringify(obj)
+    console.log(jsonFormatVar.name);
     const user = users.find((u) => u.id === parseInt(req.params.id));
     user ? res.json(user) : res.status(404).json({ message: "User not found" });
   };
