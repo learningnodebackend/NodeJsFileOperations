@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Receiver</title>
+</head>
+<body>
+  <h1>Received Messages</h1>
+  <ul id="messages"></ul>
+
+  <!-- subscriptions-transport-ws -->
+  <script src="https://unpkg.com/subscriptions-transport-ws@0.9.19/browser/client.js"></script>
+
+  <script>
+    const messagesList = document.getElementById('messages');
+
+    const wsClient = new window.SubscriptionsTransportWs.SubscriptionClient('ws://localhost:4000/graphql', {
+      reconnect: true,
+      connectionParams: {}
+    });
+
+    const query = `
+      subscription {
+        messageReceived {
+          sender
+          content
+        }
+      }
+    `;
+
+    wsClient.request({ query }).subscribe({
+      next({ data }) {
+        console.log('Subscription data:', data);
+        const message = data.messageReceived;
+        const li = document.createElement('li');
+        li.textContent = `${message.sender}: ${message.content}`;
+        messagesList.appendChild(li);
+      },
+      error(err) {
+        console.error('Subscription error:', err);
+      }
+    });
+  </script>
+</body>
+</html>

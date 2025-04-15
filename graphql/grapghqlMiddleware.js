@@ -12,15 +12,17 @@ const typeDefs = gql`
   type User {
     id: ID!
     username: String!
+    age : String!
   }
 
   type Query {
     me: User
     users: [User!]!
+    getAge : User
   }
 
   type Mutation {
-    signup(username: String!): String
+    signup(username: String!, age: String!): String
     login(username: String!): String
   }
 `;
@@ -34,20 +36,26 @@ const generateToken = (user) => {
 const resolvers = {
   Query: {
     me: (_, __, context) => {
+      console.log("my me function....")
       if (!context.user) throw new Error('Not authenticated');
+      return context.user;
+    },
+
+    getAge: (_, __, context) => {
+      console.log("mycontext",context)
       return context.user;
     },
     users: () => users,
   },
 
   Mutation: {
-    signup: (_, { username }) => {
+    signup: (_, { username,age }) => {
       const existingUser = users.find((u) => u.username === username);
       if (existingUser) {
         throw new Error('Username already taken');
       }
 
-      const newUser = { id: users.length + 1, username };
+      const newUser = { id: users.length + 1, username,age };
       users.push(newUser);
       return generateToken(newUser);
     },
@@ -77,6 +85,7 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: ({ req }) => {
+    console.log("context middle called...")
     const token = req.headers.authorization?.replace('Bearer ', '') || '';
     const user = getUserFromToken(token);
     return { user };
